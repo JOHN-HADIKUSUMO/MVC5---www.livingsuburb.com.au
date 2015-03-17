@@ -13,7 +13,7 @@ namespace MVCForum.Domain.DomainModel
         public string Filename { get; set; }
         public string Answer { get; set; }
         public DateTime CreatedDate { get; set; }
-        public bool IsDeleted  { get; set; }
-        public DateTime DeletedDate { get; set; }
+        public Nullable<bool> IsDeleted  { get; set; }
+        public Nullable<DateTime> DeletedDate { get; set; }
     }
 }

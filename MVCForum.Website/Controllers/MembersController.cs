@@ -18,6 +18,7 @@ using MVCForum.Website.Application;
 using MVCForum.Website.Areas.Admin.ViewModels;
 using MVCForum.Website.ViewModels;
 using MVCForum.Website.ViewModels.Mapping;
+using MVCForum.Website.Utilities;
 using MembershipCreateStatus = MVCForum.Domain.DomainModel.MembershipCreateStatus;
 using MembershipUser = MVCForum.Domain.DomainModel.MembershipUser;
 
@@ -264,7 +265,8 @@ namespace MVCForum.Website.Controllers
                         Password = user.Password,
                         IsApproved = user.IsApproved,
                         Comment = user.Comment,
-                        AllRoles = RoleService.AllRoles()
+                        AllRoles = RoleService.AllRoles(),
+                        GUID = Guid.NewGuid().ToString()
                     };
 
                     // See if a return url is present or not and add it
@@ -289,6 +291,7 @@ namespace MVCForum.Website.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(MemberAddViewModel userModel)
         {
+            bool status = true;
             if (SettingsService.GetSettings().SuspendRegistration != true)
             {
                 using (UnitOfWorkManager.NewUnitOfWork())
@@ -301,26 +304,46 @@ namespace MVCForum.Website.Controllers
                         {
                             // POTENTIAL SPAMMER!
                             ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.WrongAnswerRegistration"));
-                            return View();
+                            status = false;
                         }
                     }
 
-                    // Secondly see if the email is banned
+                    //        // Secondly see if the email is banned
                     if (_bannedEmailService.EmailIsBanned(userModel.Email))
                     {
                         ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.EmailIsBanned"));
-                        return View();
+                        status = false;
+                    }
+
+                    if (!Utilities.Captcha.isValidGUID(userModel.GUID))
+                    {
+                        ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.CaptchaGUID"));
+                        status = false;
+                    }
+
+                    if (!Utilities.Captcha.isValidAnswer(userModel.GUID, userModel.SpamAnswer))
+                    {
+                        ModelState.AddModelError("SpamAnswer", LocalizationService.GetResourceString("Error.CaptchaAnswer"));
+                        status = false;
                     }
                 }
 
-                // Standard Login
-                userModel.LoginType = LoginType.Standard;
+                if(status)
+                {
+                    // Standard Login
+                    userModel.LoginType = LoginType.Standard;
 
-                // Do the register logic
-                return MemberRegisterLogic(userModel);
+                    // Do the register logic
+                    return MemberRegisterLogic(userModel);
 
+                    
+                }
+                else
+                {
+                    return View(userModel);
+                }
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");            
         }
 
         public ActionResult SocialLoginValidator()

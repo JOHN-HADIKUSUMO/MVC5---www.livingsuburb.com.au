@@ -51,6 +51,9 @@ namespace MVCForum.Website.ViewModels
         public string[] Roles { get; set; }
 
         public IList<MembershipRole> AllRoles { get; set; }
+        public string GUID { get; set; }
+        [Required]
+        [ForumMvcResourceDisplayName("Error.CaptchaAnswerMustHave")]
         public string SpamAnswer { get; set; }
         public string ReturnUrl { get; set; }
         public string SocialProfileImageUrl { get; set; }
@@ -110,6 +113,11 @@ namespace MVCForum.Website.ViewModels
 
     public class LogOnViewModel
     {
+        public LogOnViewModel()
+        {
+            this.GUID = Guid.NewGuid().ToString();
+        }
+
         public string ReturnUrl { get; set; }
 
         [Required]
@@ -120,6 +128,11 @@ namespace MVCForum.Website.ViewModels
         [DataType(DataType.Password)]
         [ForumMvcResourceDisplayName("Members.Label.Password")]
         public string Password { get; set; }
+
+        public string GUID { get; set; }
+        [Required]
+        [ForumMvcResourceDisplayName("Error.CaptchaAnswerMustHave")]
+        public string SpamAnswer { get; set; }
 
         [ForumMvcResourceDisplayName("Members.Label.RememberMe")]
         public bool RememberMe { get; set; }

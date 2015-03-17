@@ -54,6 +54,8 @@ namespace MVCForum.Website
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
+            
+            routes.MapMvcAttributeRoutes();
 
             routes.MapRouteLowercase(
                 "categoryUrls", // Route name

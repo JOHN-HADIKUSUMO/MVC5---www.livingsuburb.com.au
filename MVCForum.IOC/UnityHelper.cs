@@ -126,7 +126,7 @@ namespace MVCForum.IOC
             container.BindInRequestScope<IFavouriteRepository, FavouriteRepository>();
             container.BindInRequestScope<IGlobalPermissionForRoleRepository, GlobalPermissionForRoleRepository>();
             container.BindInRequestScope<IEmailRepository, EmailRepository>();
-            container.BindInRequestScope<CaptchaRepository, CaptchaRepository>();
+            container.BindInRequestScope<ICaptchaRepository, CaptchaRepository>();
 
             //container.BindInRequestScope<ISessionHelper, SessionHelper>();
 
